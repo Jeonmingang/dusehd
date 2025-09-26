@@ -1,0 +1,17 @@
+name: ServerGUI
+main: com.minkang.ultimate.servergui.ServerGUIPlugin
+version: 1.0.5
+api-version: "1.21"
+author: minkang
+softdepend: [Citizens]
+commands:
+  서버:
+    description: 서버 GUI 열기 / NPC 연동 / 설정 리로드 (하위 명령: 열기|연동|리로드)
+    usage: "/서버 열기 | /서버 연동 | /서버 리로드"
+    aliases: [server, 서버메뉴]
+    permission: servergui.use
+permissions:
+  servergui.use:
+    default: true
+  servergui.admin:
+    default: op
