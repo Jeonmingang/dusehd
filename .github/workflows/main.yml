@@ -1,64 +1,24 @@
 name: build
-
 on:
   push:
-    branches: [ main, master ]
-    tags: [ 'v*' ]       # 예: v1.0.1 태그 푸시 시 릴리스 생성
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
+    branches: [ main ]
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write      # 태그 릴리스 업로드용
-      packages: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Temurin JDK 21
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '21'
-          cache: maven
-
-      # 루트에 pom.xml이 있을 때
+          cache: 'maven'
       - name: Build with Maven
-        run: mvn -B -U -DskipTests clean package
-
-      # 만약 소스가 하위 폴더(예: ServerGUI/)에 있으면 위 스텝 대신 아래 두 스텝 사용
-      # - name: Build with Maven (subdir)
-      #   working-directory: ./ServerGUI
-      #   run: mvn -B -U -DskipTests clean package
-
-      - name: Upload build artifact
+        run: mvn -B -V -e -U -DskipTests package
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ServerGUI-${{ github.sha }}
-          path: target/ServerGUI-*.jar
-          if-no-files-found: error
-      # 하위 폴더일 경우:
-      #   path: ServerGUI/target/ServerGUI-*.jar
-
-      # 태그 푸시 시 자동 릴리스 업로드 (옵션)
-      - name: Prepare release asset
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          mkdir -p dist
-          cp target/ServerGUI-*.jar "dist/ServerGUI-${GITHUB_REF_NAME}.jar"
-      # 하위 폴더일 경우:
-      #   cp ServerGUI/target/ServerGUI-*.jar "dist/ServerGUI-${GITHUB_REF_NAME}.jar"
-
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/ServerGUI-${{ github.ref_name }}.jar
-          generate_release_notes: true
+          name: ServerMenuBridge
+          path: target/*.jar
