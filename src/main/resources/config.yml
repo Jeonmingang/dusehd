@@ -1,0 +1,24 @@
+menu:
+  title: "&l서버 메뉴"
+  rows: 3
+  requireNpcSight: true
+  fillerGlass: true
+servers:
+  - slot: 11
+    icon: EMERALD
+    name: "&a서바이벌"
+    lore:
+      - "&7기본 생존 서버"
+    connect: survival
+  - slot: 13
+    icon: NETHER_STAR
+    name: "&b로비"
+    lore:
+      - "&7로비로 이동"
+    connect: lobby
+  - slot: 15
+    icon: DIAMOND_SWORD
+    name: "&cPVP"
+    lore:
+      - "&7전용 PVP 서버"
+    connect: pvp
