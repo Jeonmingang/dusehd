@@ -1,0 +1,20 @@
+name: LobbySelector
+main: com.minkang.ultimate.lobbyselector.LobbySelectorPlugin
+version: 1.0.0
+api-version: "1.20"
+author: minkang
+softdepend: [Citizens]
+commands:
+  servermenu:
+    description: Open server selection GUI
+    aliases: [서버메뉴]
+    permission: lobby.menu
+  npcgui:
+    description: Link/unlink the Citizens NPC you are looking at to open the GUI on right-click
+    usage: "/npcgui link|unlink|list"
+    permission: lobby.npc
+permissions:
+  lobby.menu:
+    default: true
+  lobby.npc:
+    default: op
