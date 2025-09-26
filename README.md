@@ -1,48 +1,62 @@
-# ServerGUI (Java 21, Paper 1.21.1)
+# ServerMenuBridge (Paper 1.21.1 + Velocity 3.3.0, Java 21)
 
-간단한 서버 선택 GUI 플러그인입니다. Citizens NPC와 연동 가능하며,
-BungeeCord 플러그인 메시지 채널을 통해 다른 서버로 이동합니다.
+**기능**
+- `/servermenu` (alias: `/서버메뉴`) : 플레이어가 **NPC를 바라보고** 입력하면 서버 메뉴 GUI 오픈
+- GUI에서 아이콘 클릭 시 **해당 서버로 이동**(Velocity/Bungee 호환 플러그인 메시징 사용)
+- `/samlobby reload` : 설정 리로드
+- `/samlobby open` : 강제로 GUI 열기(관리자)
 
-## 요구 사항
-- **Java 21**
-- **Paper 1.21.1** (또는 호환 빌드)
-- (선택) **Citizens** 플러그인 (NPC 우클릭 연동)
-- (선택) **Bungee/Velocity 프록시** 및 Plugin Messaging 채널 활성화
+**Citizens 연동**
+- 의존성 없이 동작. Citizens가 설치되어 있으면 NPC 엔티티에 `NPC` 메타데이터가 달리므로,
+  커맨드를 입력할 때 **바라보는 엔티티가 이 메타를 가지면 허용**한다.
+- `config.yml`의 `requireNpcSight`를 `false`로 두면 NPC 감지 없이 언제든 메뉴를 열 수 있음.
 
-## 빌드
+**Velocity 연결**
+- `BungeeCord` 및 `bungeecord:main` 채널로 `Connect` 서브채널 메시지를 보낸다.
+- Velocity 3.3.0은 레거시 Bungee 플러그인 메시징을 호환하므로 별도 프록시 플러그인 없이 접속 전환 가능.
+  (프록시 설정에서 `bungee-plugin-message-channel = true` 또는 기본 호환 모드가 켜져 있어야 함)
+
+**설치**
+1. `plugins/`에 JAR 배치
+2. 서버 시작 → `config.yml` 자동 생성
+3. `servers` 목록에 서버들(프록시 서버 이름)을 작성
+4. Citizens 등 NPC 플러그인으로 로비 NPC 배치 → NPC 바라보고 `/서버메뉴`
+
+**빌드 (Java 21)**
 ```bash
-# Maven 3.9+
-mvn -q -e -f pom.xml clean package
+mvn -V -e -U -DskipTests package
 ```
-생성 산출물은 `target/ServerGUI-1.0.7.jar` 입니다.
+`target/ServerMenuBridge-1.0.0-shaded.jar` 생성
 
-## 설치
-`target/*.jar` 를 Paper 서버의 `plugins/` 폴더에 넣고 서버를 시작합니다.
-
-## 명령어
-- `/서버 열기` : GUI 열기
-- `/서버 연동` : 바라보는 Citizens NPC에 GUI 링크/해제 (권한: `servergui.admin`)
-- `/서버 리로드` : 설정 리로드 (권한: `servergui.admin`)
-
-## 설정
-`plugins/ServerGUI/config.yml` 에서 서버 버튼을 수정하세요.
-예시(동봉된 기본 설정 참고):
+**config.yml 예시**
 ```yaml
-menu-title: "&6서버 선택"
-menu-size: 9
+menu:
+  title: "&l서버 메뉴"
+  rows: 3
+  requireNpcSight: true
+  fillerGlass: true
 servers:
-  - id: "pix121"
-    name: "&b픽셀몬 1.21.1"
-    material: "NETHER_STAR"
-    slot: 3
-    lore:
-      - "&7NeoForge 1.21.1"
-      - "&e클릭하면 이동"
-npc:
-  linked-ids: []
+  - slot: 11
+    icon: EMERALD
+    name: "&a서바이벌"
+    lore: ["&7기본 생존 서버"]
+    connect: survival
+  - slot: 13
+    icon: NETHER_STAR
+    name: "&b로비"
+    lore: ["&7로비로 이동"]
+    connect: lobby
+  - slot: 15
+    icon: DIAMOND_SWORD
+    name: "&cPVP"
+    lore: ["&7전용 PVP"]
+    connect: pvp
 ```
 
-## 주의
-- Citizens가 없을 때도 동작하며, NPC 연동 코드에는 안전 가드가 포함되어 있습니다.
-- Paper에서 제공하는 Plugin Messaging 채널 `"BungeeCord"` 를 사용합니다.
-- 이 소스는 **Java 21** 대상으로 컴파일되며, `pom.xml`의 `maven-compiler-plugin`에서 `<release>21</release>` 로 지정되어 있습니다.
+**퍼미션**
+- `servermenu.use` (기본 true)
+- `servermenu.admin` (OP)
+
+**참고**
+- 자동완성/권한 이슈가 있으면 관리자 권한으로 `/samlobby open`으로 먼저 확인.
+- Citizens가 없어도 사용할 수 있지만, `requireNpcSight=true`이면 커맨드가 막힌다.
