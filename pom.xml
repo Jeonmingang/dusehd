@@ -8,10 +8,10 @@
   <version>1.1.0</version>
   <name>LobbySelector</name>
   <description>Lobby server selector GUI with Citizens NPC linking (Paper 1.21.x)</description>
+
   <properties>
     <java.version>21</java.version>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <repositories>
@@ -21,7 +21,7 @@
     </repository>
     <repository>
       <id>citizens-repo</id>
-      <url>https://repo.citizensnpcs.co/</url>
+      <url>https://repo.citizensnpcs.co/repository/maven-public/</url>
     </repository>
   </repositories>
 
@@ -43,17 +43,20 @@
 
   <build>
     <plugins>
+      <!-- 컴파일러 버전/타겟 잠그기 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <release>21</release>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.3.0</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Built-By>LobbySelector</Built-By>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
   </build>
